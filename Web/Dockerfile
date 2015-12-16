@@ -66,6 +66,7 @@ ENV PHP_SHA256 8ef43271d9bd8cc8f8d407d3ba569de9fa14a28985ae97c76085bb50d597de98
 ENV PHP_INI_DIR /usr/local/etc/php
 RUN mkdir -p $PHP_INI_DIR/conf.d
 
+# Compile Apache
 RUN set -x \
   && apt-get update \
   && apt-get install -y $systemDeps --no-install-recommends \
@@ -78,7 +79,7 @@ RUN set -x \
 	&& tar -xvf httpd.tar.bz2 -C src/httpd --strip-components=1 \
 	&& rm httpd.tar.bz2* \
 	&& cd src/httpd \
-	&& ./configure --enable-so --enable-ssl --prefix=$HTTPD_PREFIX --enable-mods-shared=most \
+	&& ./configure --enable-so --enable-ssl --enable-cgi --enable-rewrite --prefix=$HTTPD_PREFIX --enable-mods-shared=most \
 	&& make -j"$(nproc)" \
 	&& make install \
 	&& cd ../../ \
@@ -86,7 +87,10 @@ RUN set -x \
 	&& sed -ri ' \
 		s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-		' /usr/local/apache2/conf/httpd.conf \
+		' /usr/local/apache2/conf/httpd.conf
+
+# Compile PHP
+RUN set -x \
   && curl -fSL "http://php.net/get/$PHP_FILENAME/from/this/mirror" -o "$PHP_FILENAME" \
   && echo "$PHP_SHA256 *$PHP_FILENAME" | sha256sum -c - \
   && curl -fSL "http://php.net/get/$PHP_FILENAME.asc/from/this/mirror" -o "$PHP_FILENAME.asc" \
@@ -98,7 +102,8 @@ RUN set -x \
   && ./configure \
     --with-config-file-path="$PHP_INI_DIR" \
     --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
-    --with-apxs2 \
+    --with-apxs2=/usr/local/apache2/bin/apxs \
+    --with-config-file-path=/usr/local/apache/php \
     --disable-cgi \
     --enable-mysqlnd \
     --with-curl \
@@ -110,4 +115,14 @@ RUN set -x \
   && make install \
   && apt-get purge -y --auto-remove $buildDeps
 
+# Configure Apache to use PHP
+RUN sed -i '/LoadModule php5_module/a AddHandler php5-script .php' /usr/local/apache2/conf/httpd.conf \
+    && sed -i '/DirectoryIndex index\.html/c DirectoryIndex index\.html index\.php' /usr/local/apache2/conf/httpd.conf \
+    && sed -i '/TypesConfig conf\/mime\.types/a     AddHandler php5-script \.php' /usr/local/apache2/conf/httpd.conf
+
+COPY apache2-foreground /usr/local/bin/
+
+WORKDIR /var/www/html
+
 EXPOSE 80
+CMD ["apache2-foreground"]
