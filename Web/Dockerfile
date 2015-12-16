@@ -103,7 +103,6 @@ RUN set -x \
     --with-config-file-path="$PHP_INI_DIR" \
     --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
     --with-apxs2=/usr/local/apache2/bin/apxs \
-    --with-config-file-path=/usr/local/apache/php \
     --disable-cgi \
     --enable-mysqlnd \
     --with-curl \
@@ -112,13 +111,20 @@ RUN set -x \
     --with-recode \
     --with-zlib \
   && make -j"$(nproc)" \
-  && make install \
-  && apt-get purge -y --auto-remove $buildDeps
+  && make install
 
 # Configure Apache to use PHP
 RUN sed -i '/LoadModule php5_module/a AddHandler php5-script .php' /usr/local/apache2/conf/httpd.conf \
     && sed -i '/DirectoryIndex index\.html/c DirectoryIndex index\.html index\.php' /usr/local/apache2/conf/httpd.conf \
     && sed -i '/TypesConfig conf\/mime\.types/a     AddHandler php5-script \.php' /usr/local/apache2/conf/httpd.conf
+
+# Create a php.ini file
+COPY config/php.ini /usr/local/etc/php/
+
+COPY docker-php-ext-* /usr/local/bin/
+RUN docker-php-ext-install mysql mysqli pdo pdo_mysql
+
+RUN set -x && apt-get purge -y --auto-remove $buildDeps
 
 COPY apache2-foreground /usr/local/bin/
 
