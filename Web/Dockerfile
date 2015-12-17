@@ -15,7 +15,10 @@ ENV runtimeDeps=' \
   libapr1-dev \
   libaprutil1 \
   libaprutil1-dev \
+  libicu52 \
+  libjpeg62-turbo \
   libpcre++0 \
+  libpng12-0 \
   librecode0 \
   libsqlite3-0 \
   libxml2 \
@@ -29,7 +32,10 @@ ENV buildDeps=' \
   gcc \
   libc-dev \
   libcurl4-openssl-dev \
+  libicu-dev \
+  libjpeg62-turbo-dev \
   libpcre++-dev \
+  libpng12-dev \
   libreadline6-dev \
   librecode-dev \
   libssl-dev \
@@ -104,11 +110,17 @@ RUN set -x \
     --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
     --with-apxs2=/usr/local/apache2/bin/apxs \
     --disable-cgi \
-    --enable-mysqlnd \
     --with-curl \
+    --with-gd \
+    --enable-intl \
+    --enable-mbstring \
+    --enable-mysqlnd \
     --with-openssl \
     --with-readline \
     --with-recode \
+    --enable-soap \
+    --with-xmlrpc \
+    --enable-zip \
     --with-zlib \
   && make -j"$(nproc)" \
   && make install
