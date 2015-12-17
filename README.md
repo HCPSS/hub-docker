@@ -29,4 +29,6 @@ $ docker build -t hcpss/web .
 
 And then run it:
 
+```
 $ docker run -d --name web -v <LOCAL_MOODLE_SOURCE_CODE>:/usr/local/apache2/htdocs -v <LOCAL_MOODLE_DATA_DIR>:/srv/moodledata -p 80:80 --link db:staff hcpss/web
+```
