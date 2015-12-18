@@ -142,11 +142,6 @@ RUN sed -i '/LoadModule php5_module/a AddHandler php5-script .php' /usr/local/ap
 # Create a php.ini file
 COPY config/php.ini /usr/local/etc/php/
 
-COPY docker-php-ext-* /usr/local/bin/
-# RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
-# RUN docker-php-ext-install mysql mysqli pdo pdo_mysql ldap intl mbstring gd
-# RUN docker-php-ext-install ldap
-
 RUN set -x && apt-get purge -y --auto-remove $buildDeps
 
 COPY apache2-foreground /usr/local/bin/
