@@ -17,6 +17,7 @@ ENV runtimeDeps=' \
   libaprutil1-dev \
   libicu52 \
   libjpeg62-turbo \
+  libldap2-dev \
   libpcre++0 \
   libpng12-0 \
   librecode0 \
@@ -95,6 +96,13 @@ RUN set -x \
 		s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
 		' /usr/local/apache2/conf/httpd.conf
 
+# PHP has trouble funding the LDAP libraries, because they are 64 bit?
+# https://bugs.php.net/bug.php?id=49876
+# So, let's help it out.
+RUN ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/ \
+  && ln -fs /usr/lib/x86_64-linux-gnu/liblber.so /usr/lib/ \
+  && ln -fs /usr/lib/x86_64-linux-gnu/liblber-2.4.so.2 /usr/lib/
+
 # Compile PHP
 RUN set -x \
   && curl -fSL "http://php.net/get/$PHP_FILENAME/from/this/mirror" -o "$PHP_FILENAME" \
@@ -113,6 +121,7 @@ RUN set -x \
     --with-curl \
     --with-gd \
     --enable-intl \
+    --with-ldap \
     --enable-mbstring \
     --enable-mysqlnd \
     --with-openssl \
@@ -134,7 +143,9 @@ RUN sed -i '/LoadModule php5_module/a AddHandler php5-script .php' /usr/local/ap
 COPY config/php.ini /usr/local/etc/php/
 
 COPY docker-php-ext-* /usr/local/bin/
-RUN docker-php-ext-install mysql mysqli pdo pdo_mysql
+# RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
+# RUN docker-php-ext-install mysql mysqli pdo pdo_mysql ldap intl mbstring gd
+# RUN docker-php-ext-install ldap
 
 RUN set -x && apt-get purge -y --auto-remove $buildDeps
 
