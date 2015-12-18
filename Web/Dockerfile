@@ -139,6 +139,9 @@ RUN sed -i '/LoadModule php5_module/a AddHandler php5-script .php' /usr/local/ap
     && sed -i '/DirectoryIndex index\.html/c DirectoryIndex index\.html index\.php' /usr/local/apache2/conf/httpd.conf \
     && sed -i '/TypesConfig conf\/mime\.types/a     AddHandler php5-script \.php' /usr/local/apache2/conf/httpd.conf
 
+# Configure Apache to use /simplesaml Alias
+RUN sed -i '/IfModule alias_module/a \ \ \ \ Alias "/simplesaml" "/srv/simplesaml"\n    <Directory "/srv/simplesaml">\n        Require all granted\n    </Directory>' /usr/local/apache2/conf/httpd.conf
+
 # Create a php.ini file
 COPY config/php.ini /usr/local/etc/php/
 

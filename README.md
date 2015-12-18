@@ -34,9 +34,16 @@ $ docker build -t hcpss/web .
 And then run it:
 
 ```
-$ docker run -d --name web -v <LOCAL_MOODLE_SOURCE_CODE>:/usr/local/apache2/htdocs -v <LOCAL_MOODLE_DATA_DIR>:/srv/moodledata -p 80:80 --link db:staff hcpss/web
+$ docker run -d --name web \
+  -v <LOCAL_SIMPLESAMLPHP_DIR>:/srv/simplesaml \
+  -v <LOCAL_MOODLE_SOURCE_CODE>:/usr/local/apache2/htdocs \
+  -v <LOCAL_MOODLE_DATA_DIR>:/srv/moodledata \
+  -p 80:80 \
+  --link db:staff \
+  hcpss/web
 ```
 
-Where LOCAL_MOODLE_SOURCE_CODE is the local directory where the Moodle (or 
+Where LOCAL_SIMPLESAMLPHP_DIR os tje local directory where SimpleSAML PHP is
+located and LOCAL_MOODLE_SOURCE_CODE is the local directory where the Moodle (or 
 other web app) source code is stored and LOCAL_MOODLE_DATA_DIR is the local
 Moodle data directory.
