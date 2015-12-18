@@ -2,3 +2,4 @@
 Vagrantfile
 /ansible
 .vagrant
+parameters.yml
