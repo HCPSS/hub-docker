@@ -55,7 +55,7 @@ RUN set -xe \
 	done
 
 # -- Apache prep
-ENV HTTPD_VERSION 2.4.17
+ENV HTTPD_VERSION 2.4.18
 ENV HTTPD_BZ2_URL https://www.apache.org/dist/httpd/httpd-$HTTPD_VERSION.tar.bz2
 
 ENV HTTPD_PREFIX /usr/local/apache2
