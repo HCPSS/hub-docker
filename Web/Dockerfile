@@ -124,6 +124,7 @@ RUN set -x \
     --with-ldap \
     --enable-mbstring \
     --enable-mysqlnd \
+    --with-mysqli=mysqlnd \
     --with-openssl \
     --with-readline \
     --with-recode \
@@ -140,7 +141,7 @@ RUN sed -i '/LoadModule php5_module/a AddHandler php5-script .php' /usr/local/ap
     && sed -i '/TypesConfig conf\/mime\.types/a     AddHandler php5-script \.php' /usr/local/apache2/conf/httpd.conf
 
 # Configure Apache to use /simplesaml Alias
-RUN sed -i '/IfModule alias_module/a \ \ \ \ Alias "/simplesaml" "/srv/simplesaml"\n    <Directory "/srv/simplesaml">\n        Require all granted\n    </Directory>' /usr/local/apache2/conf/httpd.conf
+RUN sed -i '/IfModule alias_module/a \ \ \ \ Alias "/simplesaml" "/srv/simplesaml/www"\n    <Directory "/srv/simplesaml/www">\n        Require all granted\n    </Directory>' /usr/local/apache2/conf/httpd.conf
 
 # Create a php.ini file
 COPY config/php.ini /usr/local/etc/php/
