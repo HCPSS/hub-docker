@@ -16,7 +16,11 @@ $ docker build -t hcpss/db .
 And then run it:
 
 ```
-$ docker run --name db -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=<YOUR_SECRET_ROOT_PASSWORD> -v <LOCAL_MYSQL_DATA_DIR>:/var/lib/mysql hcpss/db
+$ docker run -d --name db \
+  -p 3306:3306 \
+  -e MYSQL_ROOT_PASSWORD=<YOUR_SECRET_ROOT_PASSWORD> \
+  -v <LOCAL_MYSQL_DATA_DIR>:/var/lib/mysql \
+  hcpss/db
 ```
 
 Where YOUR_SECRET_ROOT_PASSWORD is the root password for MySQL and
@@ -36,7 +40,7 @@ And then run it:
 ```
 $ docker run -d --name web \
   -v <LOCAL_SIMPLESAMLPHP_DIR>:/srv/simplesaml \
-  -v <LOCAL_MOODLE_SOURCE_CODE>:/usr/local/apache2/htdocs \
+  -v <LOCAL_MOODLE_SOURCE_CODE>:/var/www \
   -v <LOCAL_MOODLE_DATA_DIR>:/srv/moodledata \
   -p 80:80 \
   --link db:staff \
