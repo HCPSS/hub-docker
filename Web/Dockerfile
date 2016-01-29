@@ -155,7 +155,7 @@ RUN set -x && apt-get purge -y --auto-remove $buildDeps
 COPY apache2-foreground /usr/local/bin/
 COPY docker-entrypoint.sh /entrypoint.sh
 
-WORKDIR /var/www/html
+WORKDIR /var/www
 
 ENTRYPOINT ["/entrypoint.sh"]
 
