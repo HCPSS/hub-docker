@@ -141,7 +141,8 @@ RUN sed -i '/LoadModule php5_module/a AddHandler php5-script .php' /usr/local/ap
     && sed -i '/TypesConfig conf\/mime\.types/a     AddHandler php5-script \.php' /usr/local/apache2/conf/httpd.conf
 
 # Change Apache document root
-RUN sed -i 's/\/usr\/local\/apache2\/htdocs\/\/var\/www\//g' /usr/local/apache2/conf/httpd.conf
+RUN rm -rf /var/www/html 
+    && sed -i 's/\/usr\/local\/apache2\/htdocs/\/var\/www\//g' /usr/local/apache2/conf/httpd.conf
 
 # Configure Apache to use /simplesaml Alias
 RUN sed -i '/IfModule alias_module/a \ \ \ \ Alias "/simplesaml" "/srv/simplesaml/www"\n    <Directory "/srv/simplesaml/www">\n        Require all granted\n    </Directory>' /usr/local/apache2/conf/httpd.conf
