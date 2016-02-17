@@ -142,7 +142,7 @@ RUN sed -i '/LoadModule php5_module/a AddHandler php5-script .php' /usr/local/ap
 
 # Change Apache document root
 RUN rm -rf /var/www/html \
-    && sed -i 's/\/usr\/local\/apache2\/htdocs/\/var\/www\//g' /usr/local/apache2/conf/httpd.conf
+    && sed -i 's/\/usr\/local\/apache2\/htdocs/\/var\/www\/current\//g' /usr/local/apache2/conf/httpd.conf
 
 # Configure Apache to use /simplesaml Alias
 RUN sed -i '/IfModule alias_module/a \ \ \ \ Alias "/simplesaml" "/srv/simplesaml/www"\n    <Directory "/srv/simplesaml/www">\n        Require all granted\n    </Directory>' /usr/local/apache2/conf/httpd.conf
@@ -154,8 +154,6 @@ RUN set -x && apt-get purge -y --auto-remove $buildDeps
 
 COPY apache2-foreground /usr/local/bin/
 COPY docker-entrypoint.sh /entrypoint.sh
-
-WORKDIR /var/www
 
 ENTRYPOINT ["/entrypoint.sh"]
 
