@@ -47,7 +47,7 @@ $ docker run -d --name web \
   hcpss/web
 ```
 
-Where LOCAL_SIMPLESAMLPHP_DIR os tje local directory where SimpleSAML PHP is
+Where LOCAL_SIMPLESAMLPHP_DIR is the local directory where SimpleSAML PHP is
 located and LOCAL_MOODLE_SOURCE_CODE is the local directory where the Moodle (or 
 other web app) source code is stored and LOCAL_MOODLE_DATA_DIR is the local
 Moodle data directory.
